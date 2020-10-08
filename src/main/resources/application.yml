@@ -1,0 +1,85 @@
+server:
+  port: 7017
+spring:
+  profiles:
+    active: dev
+  application:
+    name: com.shuyuan.judd.biz-gateway
+  cloud:
+    gateway:
+      routes: #配置路由路径
+        - id: com.shuyuan.judd.foundation
+          uri: lb://com.shuyuan.judd.foundation
+          predicates:
+            - Path=/foundation/openapi/**
+          filters:
+            - StripPrefix=1
+        - id: com.shuyuan.judd.biz-engine
+          uri: lb://com.shuyuan.judd.biz-engine
+          predicates:
+            - Path=/biz/openapi/**
+          filters:
+            - StripPrefix=1
+        - id: com.shuyuan.judd.platcertification
+          uri: lb://com.shuyuan.judd.platcertification
+          predicates:
+            - Path=/platcertification/openapi/**
+          filters:
+            - StripPrefix=1
+      discovery:
+        locator:
+          enabled: true #开启从注册中心动态创建路由的功能
+          lower-case-service-id: true #使用小写服务名，默认是大写
+      globalcors:
+        add-to-simple-url-handler-mapping: true
+        cors-configurations:
+          '[/**]':
+            # 允许携带认证信息
+            # 允许跨域的源(网站域名/ip)，设置*为全部
+            # 允许跨域请求里的head字段，设置*为全部
+            # 允许跨域的method， 默认为GET和OPTIONS，设置*为全部
+            # 跨域允许的有效期
+            allow-credentials: true
+            allowedOrigins:
+              - "http://localhost:9527"
+              - "http://192.168.1.13"
+            allowedHeaders: "*"
+            allowedMethods:
+              - OPTIONS
+              - GET
+              - POST
+            max-age: 3600
+            # 允许response的head信息
+            # 默认仅允许如下6个：
+            #     Cache-Control
+            #     Content-Language
+            #     Content-Type
+            #     Expires
+            #     Last-Modified
+            #     Pragma
+            #exposed-headers:
+  redis:
+    database: 0
+    port: 6379
+    host: 192.168.1.12
+    password:
+
+logging:
+  level:
+    root: debug
+    com.shuyuan.judd.bizgateway: debug
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:1111/eureka/
+    healthcheck:
+      enabled: false
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${spring.cloud.client.ip-address}:${server.port}
+    #此配置建议只试用开发和测试环境
+    #心跳间隔时间,默认是30秒
+    lease-renewal-interval-in-seconds: 600
+    #最后一次心跳时间后leaseExpirationDurationInSeconds秒就认为是下线了，默认是90秒
+    lease-expiration-duration-in-seconds: 1800
