@@ -1,0 +1,29 @@
+server:
+  port: 7017
+#去哪儿找配置文件，只能写在bootstrap里（比application先加载）
+#git里配置文件为${spring.application.name}-${spring.cloud.config.profile}.properties
+#profile类型
+spring:
+  profiles:
+    active: dev
+  application:
+    name: com.shuyuan.judd.biz-gateway
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.1.12:8848
+      config:
+        server-addr: 192.168.1.12:8848
+
+
+
+endpoints:
+  shutdown:
+    enabled: true
+    sensitive: false
+
+
+
+
+
+

@@ -1,10 +1,4 @@
-server:
-  port: 7017
 spring:
-  profiles:
-    active: dev
-  application:
-    name: com.shuyuan.judd.biz-gateway
   cloud:
     gateway:
       routes: #配置路由路径
